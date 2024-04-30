@@ -55,6 +55,16 @@
     button[type="submit"]:hover {
         background-color: #0056b3;
     }
+    
+      a {
+                color: #007bff; 
+                text-decoration: none; 
+                transition: color 0.3s; 
+            }
+            
+            a:hover {
+                color: #0056b3; 
+            }
 </style>
 </head>
 <body>
@@ -77,9 +87,13 @@
          <label>
              <button type="submit" id="Btn_click" name="btn" onclick="onSubmit()">Submit</button>
          </label><br /><br />
-         <asp:Label ID="lblErrorMessage" runat="server" ForeColor="Red"></asp:Label>
-
      </div>
+     
+       <div>
+                 <footer>
+                 Already Have an account ? <a href="login.aspx">Log in </a>
+                 </footer>
+         </div>
  </form>
    <script>
        function onSubmit() {

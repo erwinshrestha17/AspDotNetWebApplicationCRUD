@@ -58,6 +58,16 @@
         button:hover {
             background-color: #0056b3;
         }
+        a {
+            color: #007bff; 
+            text-decoration: none; 
+            transition: color 0.3s; 
+        }
+        
+        a:hover {
+            color: #0056b3; 
+        }
+        
     </style>
 </head>
 <body>
@@ -78,7 +88,14 @@
          <asp:Label ID="lblErrorMessage" runat="server" ForeColor="Red"></asp:Label>
 
     </div>
+    <div>
+            <footer>
+            Don't Have an account ? <a href="index.aspx">Register</a>
+            </footer>
+    </div>
 </form>
+ 
+
 
 <script>
     function validateForm() {

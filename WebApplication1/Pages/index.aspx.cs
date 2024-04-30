@@ -3,8 +3,10 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
+using System.Text;
 using System.Reflection;
 using System.Web.Services;
+using System.Security.Cryptography;
 using System.Web.UI;
 
 namespace WebApplication1.Pages
@@ -21,8 +23,6 @@ namespace WebApplication1.Pages
                      Btn_click();
 
                 }
-
-            
             }
         }
 
@@ -31,8 +31,10 @@ namespace WebApplication1.Pages
             // Retrieve form data
             string fullName = Request.Form["FullName"]?.Trim();
             string email = Request.Form["Email"]?.Trim();
-            string password = Request.Form["Password"];
+            string password = Request.Form["Password"]?.Trim();
             string phoneNumber = Request.Form["PhoneNumber"]?.Trim();
+
+            //string hashPassword = HashPassword(password);
 
             // Validate input fields, handle null or empty values
 
@@ -43,7 +45,7 @@ namespace WebApplication1.Pages
             string checkEmailQuery = "SELECT COUNT(*) FROM Users WHERE Email = @Email";
 
             // Create SQL query for data insertion
-            string insertDataQuery = "INSERT INTO Users (FullName, Email, Password, PhoneNumber) VALUES (@FullName, @Email, @Password, @PhoneNumber)";
+            string insertDataQuery = "INSERT INTO Users (FullName, Email, Password, PhoneNumber) VALUES (@FullName, @, @Password, @PhoneNumber)";
 
             // Create connection and command objects
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -56,10 +58,7 @@ namespace WebApplication1.Pages
                     int emailCount = (int)checkEmailCommand.ExecuteScalar();
                     if (emailCount > 0)
                     {
-                        // Email already exists, provide error message
-                        // You can use ASP.NET controls or JavaScript to display the error message
-                        // For example, if you're using ASP.NET WebForms:
-                        // ErrorMessageLabel.Text = "Email already exists. Please use a different email.";
+                       
                         return;
                     }
                 }
@@ -77,8 +76,8 @@ namespace WebApplication1.Pages
                     try
                     {
                         command.ExecuteNonQuery();
-                        // Provide feedback to the user indicating successful data insertion
-                        // You can return a message or redirect the user to another page
+
+                       
                     }
                     catch (Exception ex)
                     {
@@ -88,6 +87,31 @@ namespace WebApplication1.Pages
             }
         }
 
+        
+        // Method to generate a SHA256 hash from a plaintext password
+       /* public static string HashPassword(string password)
+        {
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                // ComputeHash - returns byte array, convert byte array to a string
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(password));
+
+                // Convert byte array to a string
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
+            }
+        }
+
+        // Method to verify if a plaintext password matches a hashed password
+        public static bool VerifyPassword(string plaintextPassword, string hashedPassword)
+        {
+            // Hash the plaintext password and compare it with the hashed password
+            return HashPassword(plaintextPassword) == hashedPassword;
+        }*/
         private bool IsEmailExists(string email)
         {
             string connectionString = "Server=Erwin\\MSSQLSERVER01;Database=erwin;User Id=sa;Password=123;";
@@ -102,8 +126,7 @@ namespace WebApplication1.Pages
                 return emailCount > 0;
             }
         }
-
-
+        
     }
 
     // Define a model to represent the form data
@@ -114,4 +137,5 @@ namespace WebApplication1.Pages
         public string password { get; set; }
         public string phonenumber { get; set; }
     }
+    
 }

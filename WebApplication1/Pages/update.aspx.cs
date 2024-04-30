@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Text;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
 
 namespace WebApplication1.Pages
 {
@@ -44,6 +48,10 @@ namespace WebApplication1.Pages
                         txtEmail.Text = reader["Email"].ToString();
                         txtPassword.Text = reader["Password"].ToString();
                         txtPhoneNumber.Text = reader["PhoneNumber"].ToString();
+
+
+
+
                     }
                     else
                     {
@@ -62,12 +70,15 @@ namespace WebApplication1.Pages
             // Get updated data from form fields
             string fullName = txtFullName.Text;
             string email = txtEmail.Text;
-            string password = txtPassword.Text;
+            string password = HashPassword(txtPassword.Text);
             string phoneNumber = txtPhoneNumber.Text;
+
+            Console.WriteLine(password);
 
             // Update the user data in the database
             string connectionString = ConfigurationManager.ConnectionStrings["YourConnectionString"].ConnectionString;
-            string query = "UPDATE Users SET FullName = @FullName, Email = @Email, Password = @Password, PhoneNumber = @PhoneNumber WHERE UserID = @UserID";
+            string query =
+                "UPDATE Users SET FullName = @FullName, Email = @Email, Password = @Password, PhoneNumber = @PhoneNumber WHERE UserID = @UserID";
 
             using (SqlConnection con = new SqlConnection(connectionString))
             using (SqlCommand cmd = new SqlCommand(query, con))
@@ -98,8 +109,27 @@ namespace WebApplication1.Pages
             // Redirect back to the viewUsers page
             Response.Redirect("viewUsers.aspx");
         }
-       
 
+        // Method to generate a SHA256 hash from a plaintext password
+        public static string HashPassword(string password)
+        {
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                // ComputeHash - returns byte array, convert byte array to a string
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(password));
 
+                // Convert byte array to a string
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+
+                return builder.ToString();
+            }
+        }
     }
 }
+        
+        
+

@@ -6,17 +6,16 @@
 <head runat="server">
     <title>View Table</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        
+    body {
+               font-family: Arial, sans-serif;
+               background-color: #f0f0f0;
+               margin: 0;
+               padding: 0;
+               display: flex;
+               justify-content: center;
+               align-items: center;
+               height: 100vh;
+           }
         table {
             border: 2px solid #ddd;
             border-radius: 8px;
@@ -46,11 +45,40 @@
             display: flex;
             justify-content: space-around;
         }
+        header {
+            background-color: #007bff; 
+            color: #fff;
+            padding: 10px 20px; 
+            display: flex; 
+            justify-content: space-between; 
+        }
+       
+        button {
+            background-color: #fff;
+            color: #007bff; 
+            border: none; 
+            padding: 8px 16px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            transition: background-color 0.3s, color 0.3s; 
+        }
+        
+        
+        button:hover {
+            background-color: #007bff; 
+            color: #fff; 
+        }
+        #logout {
+            margin-left: auto;
+        }
     </style>
 </head>
 <body>
 
+
     <form id="form1" runat="server">
+        <div id="Add"><button type="button" onclick="Add()">Add</button></div>
+        <div id="logout"><button type="button" onclick="logout()">Log Out</button></div>
         <div>
             <table>
                 <thead>
@@ -74,5 +102,18 @@
     </form>
 
 
+  <script>
+        function logout() {
+            // Redirect to the logout page
+            window.location.href = "login.aspx";
+        }
+        
+          function Add() {
+                    // Redirect to the logout page
+                    window.location.href = "index.aspx";
+                }
+        
+        
+    </script>
 </body>
 </html>

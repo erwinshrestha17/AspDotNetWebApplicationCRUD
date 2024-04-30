@@ -1,11 +1,6 @@
-﻿using Amazon.Runtime.Internal.Util;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace WebApplication1.Pages
 {
@@ -13,45 +8,65 @@ namespace WebApplication1.Pages
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
-        }
-        protected void btnLogin_Click(object sender, EventArgs e)
-        {
-            string email = Request[ "txtEmail"].Trim();
-            string password = Request["txtPassword"].Trim();
-
-            // Validate email and password (you may add more validation logic if needed)
-            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+            // Check if the form was submitted
+            if (IsPostBack)
             {
-                //lblMessage.Text = "Please enter both email and password.";
-                return;
-            }
+                // Extract email and password from the form
+                string email = Request.Form["txtEmail"];
+                string password = Request.Form["txtPassword"];
 
-            // Check if the credentials match any record in the database table "Users"
-            string connectionString = "your_connection_string_here"; // Update this with your actual connection string
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                string query = "SELECT COUNT(*) FROM Users WHERE Email = @Email AND Password = @Password";
-                using (SqlCommand command = new SqlCommand(query, connection))
+                // Validate email and password
+                if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
                 {
-                    command.Parameters.AddWithValue("@Email", email);
-                    command.Parameters.AddWithValue("@Password", password);
-
-                    connection.Open();
-                    int count = (int)command.ExecuteScalar();
-
-                    if (count > 0)
+                    // Check credentials in the database
+                    if (ValidateCredentials(email, password))
                     {
-                        // Redirect to viewUsers.aspx if credentials match
+                        // Redirect to viewUsers.aspx if credentials are valid
                         Response.Redirect("viewUsers.aspx");
                     }
                     else
                     {
-                        // Display error message if credentials are invalid
-                        //lblMessage.Text = "Invalid credentials.";
+                        // Display error message for invalid credentials
+                        lblErrorMessage.Text = "Invalid credentials";
                     }
                 }
             }
+        }
+
+        private bool ValidateCredentials(string email, string password)
+        {
+            // Connection string to your database
+            string connectionString = "Data Source=erwin\\MSSQLSERVER01;Initial Catalog=erwin;User Id=erwin17;Password=erwin@1998;";
+
+
+            // SQL query to check if email and password match any record in the Users table
+            string query = "SELECT COUNT(*) FROM Users WHERE Email = @Email AND Password = @Password";
+
+            // Assuming you store passwords securely (e.g., hashed), you should hash the password before comparing it in the query
+
+            // Initialize a variable to hold the result of the query
+            int count = 0;
+
+            // Create and open a connection to the database
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    // Add parameters to the query to prevent SQL injection
+                    command.Parameters.AddWithValue("@Email", email);
+                    command.Parameters.AddWithValue("@Password", password);
+
+                    // Open the connection
+                    connection.Open();
+
+                    // Execute the query and store the result
+                    count = (int)command.ExecuteScalar();
+                }
+            }
+
+            // If count > 0, it means the credentials are valid
+            return count > 0;
         }
     }
 }

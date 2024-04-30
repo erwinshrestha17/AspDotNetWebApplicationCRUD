@@ -83,28 +83,30 @@
             margin-top: 10px;
         }
     </style>
+    
+    
 </head>
 <body>
  <form id="form1" runat="server">
         <div>
             <h1>Update User</h1>
             <div>
-                <label for="txtFullName">Full Name:</label>
+                <label for="">Full Name:</label>
                 <asp:TextBox ID="txtFullName" runat="server"></asp:TextBox>
             </div>
             <br />
             <div>
-                <label for="txtEmail">Email:</label>
+                <label for="">Email:</label>
                 <asp:TextBox ID="txtEmail" runat="server"></asp:TextBox>
             </div>
             <br />
             <div>
-                <label for="txtPassword">Password:</label>
+                <label for="">Password:</label>
                 <asp:TextBox ID="txtPassword" runat="server" TextMode="Password"></asp:TextBox>
             </div>
             <br />
             <div>
-                <label for="txtPhoneNumber">Phone Number:</label>
+                <label for="">Phone Number:</label>
                 <asp:TextBox ID="txtPhoneNumber" runat="server"></asp:TextBox>
             </div>
             <br />
