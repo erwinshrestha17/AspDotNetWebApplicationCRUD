@@ -1,0 +1,9 @@
+﻿use Erwin
+
+CREATE TABLE Users (
+    UserID INT PRIMARY KEY IDENTITY(1,1),
+    FullName NVARCHAR(100) NOT NULL,
+    Email NVARCHAR(100),
+    Password NVARCHAR(100) NOT NULL,
+    PhoneNumber NVARCHAR(20) NOT NULL
+);
