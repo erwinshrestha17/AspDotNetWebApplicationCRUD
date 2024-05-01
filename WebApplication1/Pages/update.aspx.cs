@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Configuration;
 using System.Data.SqlClient;
-
-
 namespace WebApplication1.Pages
 {
     public partial class update : System.Web.UI.Page
@@ -24,11 +22,10 @@ namespace WebApplication1.Pages
                 }
             }
         }
-
         private void PopulateUserData(string userId)
         {
             string connectionString = ConfigurationManager.ConnectionStrings["YourConnectionString"].ConnectionString;
-            string query = "SELECT FullName, Email, Password, PhoneNumber FROM Users WHERE UserID = @UserID";
+            string query = "SELECT FullName, Email, Password, PhoneNumber,DateOfBirth FROM Users WHERE UserID = @UserID";
 
             using (SqlConnection con = new SqlConnection(connectionString))
             using (SqlCommand cmd = new SqlCommand(query, con))
@@ -43,8 +40,15 @@ namespace WebApplication1.Pages
                         // Populate form fields with user data
                         txtFullName.Text = reader["FullName"].ToString();
                         txtEmail.Text = reader["Email"].ToString();
+                        string pass = reader["Password"].ToString();
                         txtPassword.Text = reader["Password"].ToString();
                         txtPhoneNumber.Text = reader["PhoneNumber"].ToString();
+                        
+                        // Check if DateOfBirth column exists and it's not null
+                        if (reader["DateOfBirth"] != DBNull.Value)
+                        {
+                            txtDateOfBirth.Text = Convert.ToDateTime(reader["DateOfBirth"]).ToString("yyyy-MM-dd");
+                        }
                     }
                     else
                     {
@@ -64,14 +68,22 @@ namespace WebApplication1.Pages
             string email = txtEmail.Text;
             string password = txtPassword.Text;
             string phoneNumber = txtPhoneNumber.Text;
+            DateTime? dateOfBirth = null;
 
-            Console.WriteLine(password);
+            // Check if the date of birth textbox is not empty
+            if (!string.IsNullOrEmpty(txtDateOfBirth.Text))
+            {
+                // Parse the date of birth value from the textbox
+                if (DateTime.TryParse(txtDateOfBirth.Text, out DateTime dob))
+                {
+                    dateOfBirth = dob;
+                }
+            }
 
             // Update the user data in the database
             string connectionString = ConfigurationManager.ConnectionStrings["YourConnectionString"].ConnectionString;
             string query =
-                "UPDATE Users SET FullName = @FullName, Email = @Email, Password = @Password, PhoneNumber = @PhoneNumber WHERE UserID = @UserID";
-
+                "UPDATE Users SET FullName = @FullName, Email = @Email, Password = @Password, PhoneNumber = @PhoneNumber, DateOfBirth = @DateOfBirth WHERE UserID = @UserID";
             using (SqlConnection con = new SqlConnection(connectionString))
             using (SqlCommand cmd = new SqlCommand(query, con))
             {
@@ -79,6 +91,7 @@ namespace WebApplication1.Pages
                 cmd.Parameters.AddWithValue("@Email", email);
                 cmd.Parameters.AddWithValue("@Password", password);
                 cmd.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
+                cmd.Parameters.AddWithValue("@DateOfBirth", dateOfBirth ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@UserID", userId);
 
                 con.Open();
@@ -95,15 +108,11 @@ namespace WebApplication1.Pages
                 }
             }
         }
-
         protected void btnCancel_Click(object sender, EventArgs e)
         {
             // Redirect back to the viewUsers page
             Response.Redirect("viewUsers.aspx");
         }
-
-        // Method to generate a SHA256 hash from a plaintext password
-    
     }
 }
         

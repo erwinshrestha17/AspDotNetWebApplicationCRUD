@@ -25,8 +25,6 @@ namespace WebApplication1.Pages
 
                 if (dt.Rows.Count > 0)
                 {
-
-
                     // Clear any previous rows in the table
                     userTableBody.Controls.Clear();
 
@@ -39,11 +37,21 @@ namespace WebApplication1.Pages
                         foreach (DataColumn column in dt.Columns)
                         {
                             HtmlTableCell tableCell = new HtmlTableCell();
-                            tableCell.InnerText = row[column.ColumnName].ToString();
+
+                            if (column.ColumnName == "DateOfBirth" && row[column.ColumnName] != DBNull.Value)
+                            {
+                                // If the column is "DateOfBirth", format the date to display only the date part
+                                DateTime dateOfBirth = Convert.ToDateTime(row[column.ColumnName]);
+                                tableCell.InnerText = dateOfBirth.ToShortDateString(); // Display only the date part
+                            }
+                            else
+                            {
+                                tableCell.InnerText = row[column.ColumnName].ToString();
+                            }
+
+                            // Add the cell to the row
                             tableRow.Cells.Add(tableCell);
                         }
-
-
                         HtmlTableCell actionCell = new HtmlTableCell();
                         Button btnEdit = new Button();
                         btnEdit.Text = "Edit";
@@ -69,8 +77,6 @@ namespace WebApplication1.Pages
                 }
             }
         }
-
-
         protected void BtnEdit_Click(object sender, EventArgs e)
         {
             Button btnEdit = (Button)sender;
@@ -100,7 +106,7 @@ namespace WebApplication1.Pages
                                 string txtEmail = reader["Email"].ToString();
                                 string txtPassword = reader["Password"].ToString();
                                 string txtPhoneNumber = reader["PhoneNumber"].ToString();
-
+                                DateTime? dateOfBirth = reader["DateOfBirth"] as DateTime?;
                                 // Redirect to the update page with the user ID for editing
                                 Response.Redirect($"update.aspx?UserID={userId}");
                             }
@@ -120,10 +126,6 @@ namespace WebApplication1.Pages
                 lblMessage.Text = "An error occurred: " + ex.Message;
             }
         }
-
-
-
-
         protected void BtnDelete_Click(object sender, EventArgs e)
         {
             Button btnDelete = (Button)sender;

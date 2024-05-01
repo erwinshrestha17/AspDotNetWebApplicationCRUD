@@ -94,9 +94,6 @@
             </footer>
     </div>
 </form>
- 
-
-
 <script>
     function validateForm() {
         var email = document.getElementById("txtEmail").value;
@@ -122,17 +119,14 @@
             passwordError.innerText = "Please enter your password";
             return false;
         }
-
         return true; // Submit the form
     }
-
     function isValidEmail(email) {
         // Regular expression for validating email address
         var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     }
 </script>
-
 </body>
 </html>
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
-
 using System.Web.UI;
 
 namespace WebApplication1.Pages
@@ -10,13 +9,11 @@ namespace WebApplication1.Pages
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // This method is called when the page is loaded
-            if(!IsPostBack)
+            if (!IsPostBack)
             {
-                if (Request.Form["MethodName"] =="add")
+                if (Request.Form["MethodName"] == "add")
                 {
-                     Btn_click();
-
+                    Btn_click();
                 }
             }
         }
@@ -28,35 +25,33 @@ namespace WebApplication1.Pages
             string email = Request.Form["Email"]?.Trim();
             string password = Request.Form["Password"]?.Trim();
             string phoneNumber = Request.Form["PhoneNumber"]?.Trim();
+            string dateofbirth = Request.Form["dateofbirth"]?.Trim();
 
-            // Validate input fields, handle null or empty values
+            // Validate input fields
+            if (string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(email) ||
+                string.IsNullOrEmpty(password) || string.IsNullOrEmpty(phoneNumber))
+            {
+                // Handle empty fields
+                return;
+            }
+
+            // Check if email already exists
+            if (IsEmailExists(email))
+            {
+                // Handle email already exists
+                lblErrorMessage.Text = "Email already exists. Please use a different email.";
+                return;
+            }
 
             // Create connection string
             string connectionString = "Server=Erwin\\MSSQLSERVER01;Database=erwin;User Id=sa;Password=123;";
 
-            // Create SQL query to check if the email exists
-            string checkEmailQuery = "SELECT COUNT(*) FROM Users WHERE Email = @Email";
-
             // Create SQL query for data insertion
-            string insertDataQuery = "INSERT INTO Users (FullName, Email, Password, PhoneNumber) VALUES (@FullName, @, @Password, @PhoneNumber)";
+            string insertDataQuery = "INSERT INTO Users (FullName, Email, Password, PhoneNumber,DateOfBirth) VALUES (@FullName, @Email, @Password, @PhoneNumber,@DateOfBirth)";
 
             // Create connection and command objects
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                // Check if the email already exists
-                using (SqlCommand checkEmailCommand = new SqlCommand(checkEmailQuery, connection))
-                {
-                    checkEmailCommand.Parameters.Add("@Email", SqlDbType.NVarChar).Value = email;
-                    connection.Open();
-                    int emailCount = (int)checkEmailCommand.ExecuteScalar();
-                    if (emailCount > 0)
-                    {
-                       
-                        return;
-                    }
-                }
-
-                // If email doesn't exist, proceed with data insertion
                 using (SqlCommand command = new SqlCommand(insertDataQuery, connection))
                 {
                     // Add parameters to the command
@@ -64,45 +59,46 @@ namespace WebApplication1.Pages
                     command.Parameters.Add("@Email", SqlDbType.NVarChar).Value = email;
                     command.Parameters.Add("@Password", SqlDbType.NVarChar).Value = password;
                     command.Parameters.Add("@PhoneNumber", SqlDbType.NVarChar).Value = phoneNumber;
-
+                    command.Parameters.Add("@DateOfBirth", SqlDbType.Date).Value = dateofbirth;
                     // Open connection and execute command to insert data
                     try
                     {
+                        connection.Open();
                         command.ExecuteNonQuery();
-
-                       
+                        // Data inserted successfully
+                        // Redirect to the same page
+                        Response.Redirect("login.aspx");
+                        // Commit transaction
                     }
                     catch (Exception ex)
                     {
-                        // Log the exception or provide feedback to the user indicating the error
+                        // Handle and log exceptions
                     }
                 }
             }
         }
+
         private bool IsEmailExists(string email)
         {
+            // Create connection string
             string connectionString = "Server=Erwin\\MSSQLSERVER01;Database=erwin;User Id=sa;Password=123;";
+            // Create SQL query to check if email exists
             string checkEmailQuery = "SELECT COUNT(*) FROM Users WHERE Email = @Email";
 
+            // Create connection and command objects
             using (SqlConnection connection = new SqlConnection(connectionString))
-            using (SqlCommand command = new SqlCommand(checkEmailQuery, connection))
             {
-                command.Parameters.Add("@Email", SqlDbType.NVarChar).Value = email;
-                connection.Open();
-                int emailCount = (int)command.ExecuteScalar();
-                return emailCount > 0;
+                using (SqlCommand command = new SqlCommand(checkEmailQuery, connection))
+                {
+                    // Add parameter to the command
+                    command.Parameters.Add("@Email", SqlDbType.NVarChar).Value = email;
+
+                    // Open connection and execute command to check if email exists
+                    connection.Open();
+                    int emailCount = (int)command.ExecuteScalar();
+                    return emailCount > 0;
+                }
             }
         }
-        
     }
-
-    // Define a model to represent the form data
-    public class FormDataModel
-    {
-        public string fullname { get; set; }
-        public string email { get; set; }
-        public string password { get; set; }
-        public string phonenumber { get; set; }
-    }
-    
 }
