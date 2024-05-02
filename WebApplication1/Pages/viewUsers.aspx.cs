@@ -155,11 +155,7 @@ namespace WebApplication1.Pages
             }
         }
 
-        protected void btnAdd_Click(object sender, EventArgs e)
-        {
-            // Redirect back to the viewUsers page
-            Response.Redirect("index.aspx");
-        }
+ 
         
 
 

@@ -1,4 +1,5 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="index.aspx.cs" Inherits="WebApplication1.Pages.index" %>
+﻿<%@ Page Title="Title" Language="C#" MasterPageFile="MasterPage" CodeBehind="newIndex.aspx.cs" Inherits="WebApplication1.NewPages.newIndex" %>
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head runat="server">
@@ -54,7 +55,7 @@
     </style>
 </head>
 <body>
-    <form id="form1" runat="server">
+    <form id="newform1" runat="server">
         <div>
             <label>
                 <input type="text" id="fullname" name="fullname" placeholder="Full Name" required="required" />
@@ -201,5 +202,3 @@
 
 </body>
 </html>
-
-
