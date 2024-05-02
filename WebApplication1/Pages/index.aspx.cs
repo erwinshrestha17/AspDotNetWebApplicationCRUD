@@ -9,109 +9,94 @@ namespace WebApplication1.Pages
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // No need to check IsPostBack here, as you only want to handle the form submission
-            // which is already handled in the Btn_click method
+            // Call Btn_click method to handle form submission when the page is loaded
+            Btn_click();
         }
 
-     protected void Btn_click()
-{
-    try
-    {
-        // Retrieve form data
-        string fullName = Request.Form["fullname"]?.Trim();
-        string email = Request.Form["email"]?.Trim();
-        string password = Request.Form["password"]?.Trim();
-        string phoneNumber = Request.Form["phonenumber"]?.Trim();
-        string dateOfBirth = Request.Form["dateofbirth"]?.Trim();
-
-        // Validate input fields
-        if (string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(email) ||
-            string.IsNullOrEmpty(password) || string.IsNullOrEmpty(phoneNumber) ||
-            string.IsNullOrEmpty(dateOfBirth))
+        private void Btn_click()
         {
-            // Handle empty fields
-            lblErrorMessage.Text = "All fields are required.";
-            return;
-        }
-
-        // Check if email already exists
-        if (IsEmailExists(email))
-        {
-            // Handle email already exists
-            lblErrorMessage.Text = "Email already exists. Please use a different email.";
-            return;
-        }
-
-        // Create connection string
-        string connectionString = "Server=Erwin\\MSSQLSERVER01;Database=erwin;User Id=sa;Password=123;";
-
-        // Create SQL query for data insertion
-        string insertDataQuery = "INSERT INTO Users (FullName, Email, Password, PhoneNumber, DateOfBirth) " +
-                                 "VALUES (@FullName, @Email, @Password, @PhoneNumber, @DateOfBirth)";
-
-        // Create connection and command objects
-        using (SqlConnection connection = new SqlConnection(connectionString))
-        {
-            using (SqlCommand command = new SqlCommand(insertDataQuery, connection))
+            // Check if the form is submitted
+            if (IsPostBack)
             {
-                // Add parameters to the command
-                command.Parameters.Add("@FullName", SqlDbType.NVarChar).Value = fullName;
-                command.Parameters.Add("@Email", SqlDbType.NVarChar).Value = email;
-                command.Parameters.Add("@Password", SqlDbType.NVarChar).Value = password;
-                command.Parameters.Add("@PhoneNumber", SqlDbType.NVarChar).Value = phoneNumber;
-                command.Parameters.Add("@DateOfBirth", SqlDbType.Date).Value = dateOfBirth;
+                // Retrieve form data
+                string fullName = Request.Form["fullname"]?.Trim();
+                string email = Request.Form["email"]?.Trim();
+                string password = Request.Form["password"]?.Trim();
+                string phoneNumber = Request.Form["phonenumber"]?.Trim();
+                string dateOfBirth = Request.Form["dateofbirth"]?.Trim();
+                
+                
 
-                // Open connection and execute command to insert data
-                connection.Open();
-                int rowsAffected = command.ExecuteNonQuery();
-                if (rowsAffected > 0)
+                try
                 {
-                    // Data inserted successfully
-                    Response.Redirect("login.aspx");
+                    // Validate input fields
+                    if (string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(email) ||
+                        string.IsNullOrEmpty(password) || string.IsNullOrEmpty(phoneNumber) ||
+                        string.IsNullOrEmpty(dateOfBirth))
+                    {
+                        // Handle empty fields
+                        lblErrorMessage.Text = "All fields are required.";
+                        return;
+                    }
+
+                    // Call the ManageUsers stored procedure to insert data
+                    int rowsAffected = ManageUsers("insert", fullName, email, password, phoneNumber, dateOfBirth);
+                    if (rowsAffected > 0)
+                    {
+                        // Clear the form fields or show a success message
+                        // For example:
+                        lblErrorMessage.Text = "Data inserted successfully!";
+                    }
+                    else
+                    {
+                        // Handle insertion failure
+                        lblErrorMessage.Text = "Failed to insert data into the database.";
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    // Handle insertion failure
-                    lblErrorMessage.Text = "Failed to insert data into the database.";
+                    // Handle and log exceptions
+                    lblErrorMessage.Text = "An error occurred: " + ex.Message;
                 }
+
+                // Redirect to another page after form submission
+                Response.Redirect("AnotherPage.aspx");
             }
         }
-    }
-    catch (Exception ex)
-    {
-        // Handle and log exceptions
-        lblErrorMessage.Text = "An error occurred: " + ex.Message;
-    }
-}
 
-
-        private bool IsEmailExists(string email)
+        private int ManageUsers(string action, string fullName, string email, string password, string phoneNumber, string dateOfBirth)
         {
             // Create connection string
-            string connectionString = "Server=Erwin\\MSSQLSERVER01;Database=erwin;User Id=sa;Password=123;";
-            // Create SQL query to check if email exists
-            string checkEmailQuery = "SELECT COUNT(*) FROM Users WHERE Email = @Email";
+            string connectionString = "YourConnectionString";
 
             // Create connection and command objects
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                using (SqlCommand command = new SqlCommand(checkEmailQuery, connection))
+                using (SqlCommand command = new SqlCommand("ManageUsers", connection))
                 {
-                    // Add parameter to the command
-                    command.Parameters.Add("@Email", SqlDbType.NVarChar).Value = email;
+                    command.CommandType = CommandType.StoredProcedure;
 
-                    // Open connection and execute command to check if email exists
+                    // Add parameters to the command
+                    command.Parameters.AddWithValue("@Action", action);
+                    command.Parameters.AddWithValue("@FullName", fullName);
+                    command.Parameters.AddWithValue("@Email", email);
+                    command.Parameters.AddWithValue("@Password", password);
+                    command.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
+                    command.Parameters.AddWithValue("@DateOfBirth", dateOfBirth);
+
+                    // Add output parameter to get rows affected
+                    SqlParameter rowsAffectedParam = new SqlParameter("@RowsAffected", SqlDbType.Int);
+                    rowsAffectedParam.Direction = ParameterDirection.ReturnValue;
+                    command.Parameters.Add(rowsAffectedParam);
+
+                    // Open connection and execute command
                     connection.Open();
-                    int emailCount = (int)command.ExecuteScalar();
-                    return emailCount > 0;
+                    command.ExecuteNonQuery();
+
+                    // Get the value of the output parameter
+                    return (int)rowsAffectedParam.Value;
                 }
             }
-        }
-
-        protected void Btn_click(object sender, EventArgs e)
-        {
-            // Call the Btn_click method to handle form submission
-            Btn_click();
         }
     }
 }

@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Data;
+using System.Data.SqlClient;
+
+
 namespace WebApplication1.Pages
 {
     public partial class update : System.Web.UI.Page
@@ -22,10 +26,11 @@ namespace WebApplication1.Pages
                 }
             }
         }
+
         private void PopulateUserData(string userId)
         {
             string connectionString = ConfigurationManager.ConnectionStrings["YourConnectionString"].ConnectionString;
-            string query = "SELECT FullName, Email, Password, PhoneNumber,DateOfBirth,Department FROM Users WHERE UserID = @UserID";
+            string query = "SELECT FullName, Email, Password, PhoneNumber, DateOfBirth FROM Users WHERE UserID = @UserID";
 
             using (SqlConnection con = new SqlConnection(connectionString))
             using (SqlCommand cmd = new SqlCommand(query, con))
@@ -40,10 +45,9 @@ namespace WebApplication1.Pages
                         // Populate form fields with user data
                         txtFullName.Text = reader["FullName"].ToString();
                         txtEmail.Text = reader["Email"].ToString();
-                        string pass = reader["Password"].ToString();
                         txtPassword.Text = reader["Password"].ToString();
                         txtPhoneNumber.Text = reader["PhoneNumber"].ToString();
-                        
+
                         // Check if DateOfBirth column exists and it's not null
                         if (reader["DateOfBirth"] != DBNull.Value)
                         {
@@ -58,6 +62,7 @@ namespace WebApplication1.Pages
                 }
             }
         }
+
         protected void btnUpdate_Click(object sender, EventArgs e)
         {
             // Get UserID from the query string
@@ -84,6 +89,7 @@ namespace WebApplication1.Pages
             string connectionString = ConfigurationManager.ConnectionStrings["YourConnectionString"].ConnectionString;
             string query =
                 "UPDATE Users SET FullName = @FullName, Email = @Email, Password = @Password, PhoneNumber = @PhoneNumber, DateOfBirth = @DateOfBirth WHERE UserID = @UserID";
+
             using (SqlConnection con = new SqlConnection(connectionString))
             using (SqlCommand cmd = new SqlCommand(query, con))
             {
@@ -108,6 +114,7 @@ namespace WebApplication1.Pages
                 }
             }
         }
+
         protected void btnCancel_Click(object sender, EventArgs e)
         {
             // Redirect back to the viewUsers page
@@ -115,6 +122,3 @@ namespace WebApplication1.Pages
         }
     }
 }
-        
-        
-

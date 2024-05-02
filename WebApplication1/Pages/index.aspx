@@ -161,7 +161,8 @@ button[type="submit"]:hover {
                        Email: $('#email').val(),
                        Password: $('#password').val(),
                        Phonenumber: $('#phonenumber').val(),
-                       Dateofbirth: $('#dateofbirth').val(),
+                       Dateofbirth: $('#dateofbirth').val(),  
+                     
                    },
                    dataType: "json", // Specify the expected data type of the response
                    success: function (response) {
