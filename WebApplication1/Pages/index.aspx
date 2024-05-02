@@ -52,45 +52,86 @@
     
     }
     
-    button[type="submit"]:hover {
-        background-color: #0056b3;
+button[type="submit"] {
+    padding: 12px 20px; /* Increase padding to make the button bigger */
+    border-radius: 4px;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 14px; /* Increase font size to make the button text bigger */
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+            
+    select {
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 16px; 
+        font-family: Arial, sans-serif; 
+        background-color: #fff; 
+        color: #333; /
+        appearance: none; 
+        -webkit-appearance: none; 
+        -moz-appearance: none; 
+        cursor: pointer; 
     }
     
-      a {
-                color: #007bff; 
-                text-decoration: none; 
-                transition: color 0.3s; 
-            }
-            
-            a:hover {
-                color: #0056b3; 
-            }
+    /* Style for when the dropdown is focused */
+    select:focus {
+        outline: none; 
+        border-color: #007bff; 
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
+    }
+    
+   
+    option {
+        padding: 8px;
+        background-color: #fff; 
+        color: #333; 
+    }
+
+    option:hover {
+        background-color: #f0f0f0; 
+        color: #007bff; 
+    }
+        
 </style>
 </head>
 <body>
  <form id="form1"  method="post" runat="server">
     <h2>Register</h2>
 
-     <div>
+     <div style="text-align: center">
          <label>
              <input type="text" id="fullname" name="fullname" placeholder="Full Name" required="required"/>
-        </label><br /><br />
+        </label><br />
          <label>
              <input type="email" id="email" name="email" placeholder="Email" />
-         </label><br /><br />
+         </label><br />
          <label>
              <input type="password" id="password" name="password" placeholder="Password" required="required"/>
-         </label><br /><br />
+         </label><br />
          <label>
              <input type="tel" id="phonenumber" name="phonenumber" placeholder="Contact Number" required="required" />
-         </label><br /><br />
+         </label><br />
          <label>
-          <input type="date" id="dateofbirth" name="dateofbirth" required="required" style="">
-         </label><br /><br />
-          <asp:Label ID="lblErrorMessage" runat="server" ForeColor="Red" Visible="false"></asp:Label><br /><br />
+          <input type="date" id="dateofbirth" name="dateofbirth" required="required" style=""><br />
+         </label><br />
+          <asp:Label ID="lblErrorMessage" runat="server" ForeColor="Red" Visible="false"></asp:Label>
+          
+          <!-- Add a container for the error message -->
+          <div id="errorMessage" style="color: red;"></div>
          <label>
              <button type="submit" id="Btn_click" name="btn">Submit</button>
-         </label><br /><br />
+         </label><br />
      </div>
      <div>
            <footer>
@@ -120,7 +161,7 @@
                        Email: $('#email').val(),
                        Password: $('#password').val(),
                        Phonenumber: $('#phonenumber').val(),
-                       Dateofbirth: $('#dateofbirth').val()
+                       Dateofbirth: $('#dateofbirth').val(),
                    },
                    dataType: "json", // Specify the expected data type of the response
                    success: function (response) {

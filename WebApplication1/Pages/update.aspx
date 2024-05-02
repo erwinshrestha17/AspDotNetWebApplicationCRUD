@@ -94,6 +94,42 @@
             box-sizing: border-box;
             
             }
+            
+            
+             select {
+                 padding: 8px;
+                 border-radius: 4px;
+                 border: 1px solid #ccc;
+                 width: 100%;
+                 box-sizing: border-box;
+                 font-size: 16px; 
+                 font-family: Arial, sans-serif; 
+                 background-color: #fff; 
+                 color: #333; /
+                 appearance: none; 
+                 -webkit-appearance: none; 
+                 -moz-appearance: none; 
+                 cursor: pointer; 
+             }
+             
+             /* Style for when the dropdown is focused */
+             select:focus {
+                 outline: none; 
+                 border-color: #007bff; 
+                 box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
+             }
+             
+            
+             option {
+                 padding: 8px;
+                 background-color: #fff; 
+                 color: #333; 
+             }
+         
+             option:hover {
+                 background-color: #f0f0f0; 
+                 color: #007bff; 
+             }   
     </style>
 </head>
 <body>
@@ -120,6 +156,9 @@
                <label for="txtDateOfBirth">Date of Birth:</label>
                 <asp:TextBox ID="txtDateOfBirth" runat="server" CssClass="form-control" TextMode="Date"></asp:TextBox>
             </div>
+            <br />
+       
+<br />
             <div class="btn-group">
                 <asp:Button ID="btnUpdate" runat="server" Text="Update" OnClick="btnUpdate_Click" CssClass="btn btn-update" />
                 <asp:Button ID="btnCancel" runat="server" Text="Cancel" OnClick="btnCancel_Click" CssClass="btn btn-cancel" />

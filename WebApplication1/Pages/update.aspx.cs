@@ -25,7 +25,7 @@ namespace WebApplication1.Pages
         private void PopulateUserData(string userId)
         {
             string connectionString = ConfigurationManager.ConnectionStrings["YourConnectionString"].ConnectionString;
-            string query = "SELECT FullName, Email, Password, PhoneNumber,DateOfBirth FROM Users WHERE UserID = @UserID";
+            string query = "SELECT FullName, Email, Password, PhoneNumber,DateOfBirth,Department FROM Users WHERE UserID = @UserID";
 
             using (SqlConnection con = new SqlConnection(connectionString))
             using (SqlCommand cmd = new SqlCommand(query, con))
