@@ -38,13 +38,14 @@ namespace WebApplication1.Pages
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
+                connection.Open();
+
                 using (SqlCommand checkEmailCommand = new SqlCommand(checkEmailQuery, connection))
-                 {
+                {
                     checkEmailCommand.Parameters.Add("@Email", SqlDbType.NVarChar).Value = email;
-                    connection.Open();
-                   int emailCount = (int)checkEmailCommand.ExecuteScalar();
+                    int emailCount = (int)checkEmailCommand.ExecuteScalar();
                     if (emailCount > 0)
-                     {
+                    {
                         lblErrorMessage.Text = "Email already exists. Please use a different email.";
                     }
                     else
@@ -59,21 +60,21 @@ namespace WebApplication1.Pages
 
                             try
                             {
-                                connection.Open();
                                 command.ExecuteNonQuery();
                                 Response.Redirect("login.aspx");
                             }
                             catch (Exception ex)
                             {
                                 // Log the exception or provide feedback to the user indicating the error
+                                lblErrorMessage.Text = "An error occurred while registering. Please try again later.";
+                                // Log the exception details
+                                // Log.Error(ex, "Error occurred while registering user.");
                             }
                         }
                     }
-                 }
-
-                
+                }
             }
-            
+
     
     
         }
