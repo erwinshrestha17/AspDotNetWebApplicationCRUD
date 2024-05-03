@@ -30,12 +30,15 @@ namespace WebApplication1.Pages
         private void PopulateUserData(string userId)
         {
             string connectionString = ConfigurationManager.ConnectionStrings["YourConnectionString"].ConnectionString;
-            string query = "SELECT FullName, Email, Password, PhoneNumber, DateOfBirth FROM Users WHERE UserID = @UserID";
-
+            string storedProcedureName = "ManageUsers";
+            
             using (SqlConnection con = new SqlConnection(connectionString))
-            using (SqlCommand cmd = new SqlCommand(query, con))
+            using (SqlCommand cmd = new SqlCommand(storedProcedureName, con))
             {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Action", "selectOne");
                 cmd.Parameters.AddWithValue("@UserID", userId);
+
                 con.Open();
 
                 using (SqlDataReader reader = cmd.ExecuteReader())
@@ -63,6 +66,7 @@ namespace WebApplication1.Pages
             }
         }
 
+
         protected void btnUpdate_Click(object sender, EventArgs e)
         {
             // Get UserID from the query string
@@ -85,24 +89,24 @@ namespace WebApplication1.Pages
                 }
             }
 
-            // Update the user data in the database
+            // Update the user data in the database using the ManageUsers stored procedure
             string connectionString = ConfigurationManager.ConnectionStrings["YourConnectionString"].ConnectionString;
-            string query =
-                "UPDATE Users SET FullName = @FullName, Email = @Email, Password = @Password, PhoneNumber = @PhoneNumber, DateOfBirth = @DateOfBirth WHERE UserID = @UserID";
+            string storedProcedureName = "ManageUsers";
 
             using (SqlConnection con = new SqlConnection(connectionString))
-            using (SqlCommand cmd = new SqlCommand(query, con))
+            using (SqlCommand cmd = new SqlCommand(storedProcedureName, con))
             {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Action", "update");
+                cmd.Parameters.AddWithValue("@UserID", userId);
                 cmd.Parameters.AddWithValue("@FullName", fullName);
                 cmd.Parameters.AddWithValue("@Email", email);
                 cmd.Parameters.AddWithValue("@Password", password);
                 cmd.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
                 cmd.Parameters.AddWithValue("@DateOfBirth", dateOfBirth ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@UserID", userId);
 
                 con.Open();
                 int rowsAffected = cmd.ExecuteNonQuery();
-                con.Close();
 
                 if (rowsAffected > 0)
                 {
@@ -114,6 +118,7 @@ namespace WebApplication1.Pages
                 }
             }
         }
+
 
         protected void btnCancel_Click(object sender, EventArgs e)
         {

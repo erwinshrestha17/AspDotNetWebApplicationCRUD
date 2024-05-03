@@ -77,7 +77,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
-    <Content Include="NewPages\newIndex.aspx" />
     <Content Include="Pages\index.aspx" />
     <Content Include="Pages\login.aspx" />
     <Content Include="Pages\update.aspx" />
@@ -87,13 +86,6 @@
   <ItemGroup>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
-    <Compile Include="NewPages\newIndex.aspx.cs">
-      <SubType>ASPXCodeBehind</SubType>
-      <DependentUpon>newIndex.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="NewPages\newIndex.aspx.designer.cs">
-      <DependentUpon>newIndex.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\index.aspx.cs">
       <DependentUpon>index.aspx</DependentUpon>

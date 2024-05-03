@@ -10,18 +10,24 @@ namespace WebApplication1.Pages
     public partial class viewUsers : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
-        {
-            string connectionString = ConfigurationManager.ConnectionStrings["YourConnectionString"].ConnectionString;
+{
+    try
+    {
+        string connectionString = ConfigurationManager.ConnectionStrings["YourConnectionString"].ConnectionString;
+        string storedProcedureName = "ManageUsers";
 
-            using (SqlConnection con = new SqlConnection(connectionString))
+        using (SqlConnection con = new SqlConnection(connectionString))
+        {
+            using (SqlCommand cmd = new SqlCommand(storedProcedureName, con))
             {
-                SqlCommand cmd = new SqlCommand("SELECT * FROM Users", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Action", "selectAll");
+
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
 
                 con.Open();
                 da.Fill(dt);
-                con.Close();
 
                 if (dt.Rows.Count > 0)
                 {
@@ -52,7 +58,10 @@ namespace WebApplication1.Pages
                             // Add the cell to the row
                             tableRow.Cells.Add(tableCell);
                         }
+
+                        // Add action cells for edit and delete buttons
                         HtmlTableCell actionCell = new HtmlTableCell();
+
                         Button btnEdit = new Button();
                         btnEdit.Text = "Edit";
                         btnEdit.CommandArgument = row["UserID"].ToString(); // Set the user ID as the command argument
@@ -64,6 +73,7 @@ namespace WebApplication1.Pages
                         btnDelete.CommandArgument = row["UserID"].ToString(); // Set the user ID as the command argument
                         btnDelete.Click += BtnDelete_Click; // Attach event handler for delete button click
                         actionCell.Controls.Add(btnDelete);
+
                         tableRow.Cells.Add(actionCell);
 
                         // Add the row to the table body
@@ -77,7 +87,14 @@ namespace WebApplication1.Pages
                 }
             }
         }
-        protected void BtnEdit_Click(object sender, EventArgs e)
+    }
+    catch (Exception ex)
+    {
+        // Handle any exceptions here, such as logging or displaying an error message
+        lblMessage.Text = "An error occurred: " + ex.Message;
+    }
+}
+        protected void BtnEdit_Click(object sender, EventArgs e) 
         {
             Button btnEdit = (Button)sender;
             string userId = btnEdit.CommandArgument;
@@ -85,17 +102,17 @@ namespace WebApplication1.Pages
             try
             {
                 string connectionString = ConfigurationManager.ConnectionStrings["YourConnectionString"].ConnectionString;
-
-                // Use parameterized query
-                string query = "SELECT * FROM Users WHERE UserID = @UserID";
+                string storedProcedureName = "ManageUsers";
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     con.Open();
 
-                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    using (SqlCommand cmd = new SqlCommand(storedProcedureName, con))
                     {
-                        cmd.Parameters.AddWithValue("@UserID", userId);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@Action", "select");
+                        cmd.Parameters.AddWithValue("@UserID", int.Parse(userId));
 
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
@@ -107,6 +124,7 @@ namespace WebApplication1.Pages
                                 string txtPassword = reader["Password"].ToString();
                                 string txtPhoneNumber = reader["PhoneNumber"].ToString();
                                 DateTime? dateOfBirth = reader["DateOfBirth"] as DateTime?;
+
                                 // Redirect to the update page with the user ID for editing
                                 Response.Redirect($"update.aspx?UserID={userId}");
                             }
@@ -124,23 +142,30 @@ namespace WebApplication1.Pages
             {
                 // Handle any exceptions here, such as logging or displaying an error message
                 lblMessage.Text = "An error occurred: " + ex.Message;
-            }
+            } 
         }
+        
+        
         protected void BtnDelete_Click(object sender, EventArgs e)
+{
+    Button btnDelete = (Button)sender;
+    string userId = btnDelete.CommandArgument;
+
+    try
+    {
+        string connectionString = ConfigurationManager.ConnectionStrings["YourConnectionString"].ConnectionString;
+        string storedProcedureName = "ManageUsers";
+
+        using (SqlConnection con = new SqlConnection(connectionString))
         {
-            Button btnDelete = (Button)sender;
-            string userId = btnDelete.CommandArgument;
-
-            string connectionString = ConfigurationManager.ConnectionStrings["YourConnectionString"].ConnectionString;
-
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (SqlCommand cmd = new SqlCommand(storedProcedureName, con))
             {
-                SqlCommand cmd = new SqlCommand("DELETE FROM Users WHERE UserID = @UserID", con);
-                cmd.Parameters.AddWithValue("@UserID", userId);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Action", "delete");
+                cmd.Parameters.AddWithValue("@UserID", int.Parse(userId));
 
                 con.Open();
                 int rowsAffected = cmd.ExecuteNonQuery();
-                con.Close();
 
                 if (rowsAffected > 0)
                 {
@@ -154,12 +179,14 @@ namespace WebApplication1.Pages
                 }
             }
         }
-
- 
+    }
+    catch (Exception ex)
+    {
+        // Handle any exceptions here, such as logging or displaying an error message
+        lblMessage.Text = "An error occurred: " + ex.Message;
+    }
+}
         
-
-
-    
 
     }
 }

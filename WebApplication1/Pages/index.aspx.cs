@@ -32,6 +32,16 @@ namespace WebApplication1.Pages
                 return;
             }
 
+            // NormalInsertQuery(fullName, email, password, phoneNumber, dateOfBirth);
+             ManageUserSP("insert",fullName,email,password,phoneNumber,dateOfBirth);
+
+
+
+
+        }
+
+        private string NormalInsertQuery(string fullName , string email,string password,string phoneNumber,string dateOfBirth)
+        { 
             string connectionString = "Data Source=erwin\\MSSQLSERVER01;Initial Catalog=erwin;User Id=erwin17;Password=erwin@1998;";
             string checkEmailQuery = "SELECT COUNT(*) FROM Users WHERE Email = @Email";
             string insertDataQuery = "INSERT INTO Users (FullName, Email, Password, PhoneNumber, DateOfBirth) VALUES (@FullName, @Email, @Password, @PhoneNumber, @DateOfBirth)";
@@ -42,6 +52,8 @@ namespace WebApplication1.Pages
 
                 using (SqlCommand checkEmailCommand = new SqlCommand(checkEmailQuery, connection))
                 {
+                    
+                    
                     checkEmailCommand.Parameters.Add("@Email", SqlDbType.NVarChar).Value = email;
                     int emailCount = (int)checkEmailCommand.ExecuteScalar();
                     if (emailCount > 0)
@@ -75,9 +87,50 @@ namespace WebApplication1.Pages
                 }
             }
 
-    
-    
+            return "Invalid";
         }
-        
+
+        private static void ManageUserSP(string action, string fullName, string email, string password, string phoneNumber, string dateOfBirth)
+        {
+            string connectionString = "Data Source=erwin\\MSSQLSERVER01;Initial Catalog=erwin;User Id=erwin17;Password=erwin@1998;"; 
+            string storedProcedureName = "ManageUsers";
+            
+            
+            // Create connection and command objects
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                using (SqlCommand command = new SqlCommand(storedProcedureName, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    // Add parameters
+                    command.Parameters.AddWithValue("@Action", action);
+                    command.Parameters.AddWithValue("@FullName", fullName);
+                    command.Parameters.AddWithValue("@Email", email);
+                    command.Parameters.AddWithValue("@Password", password);
+                    command.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
+                    command.Parameters.AddWithValue("@DateOfBirth", dateOfBirth);
+
+                    try
+                    {
+                        connection.Open();
+                        command.ExecuteNonQuery();
+                        // Handle success
+                        Console.WriteLine("User action ({0}) executed successfully.", action);
+                    }
+                    catch (SqlException ex)
+                    {
+                        // Handle SQL exceptions
+                        Console.WriteLine("An error occurred: " + ex.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        // Handle other exceptions
+                        Console.WriteLine("An error occurred: " + ex.Message);
+                    }
+                }
+            }
+
+        }
     }
 }
