@@ -51,6 +51,27 @@
             margin-top: 20px;
             text-align: center;
         }
+          #tagSelection {
+            padding: 10px;
+            width: 100%;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #333;
+            width: 200px;
+          }
+          
+          /* Style for dropdown menu options */
+          #tagSelection option {
+            background-color: #fff;
+            color: #333;
+          }
+          
+          /* Hover effect for dropdown menu options */
+          #tagSelection option:hover {
+            background-color: #f0f0f0;
+          }
     </style>
 </head>
 <body>
@@ -71,15 +92,17 @@
             <label>
                 <input type="date" id="dateofbirth" name="dateofbirth" required="required" />
             </label>
+           <select id="tagSelection">
+             <option value="Select Option">Select Option</option>
+             <option id="tagSelection" value="option1">Option 1</option>
+             <option id="tagSelection" value="option2">Option 2</option>
+             <option id="tagSelection" value="option3">Option 3</option>
+           </select>
             <asp:Label ID="lblErrorMessage" runat="server" ForeColor="Red" Visible="false"></asp:Label>
             <br /><br />
             <button type="submit" id="Btn_click" name="btn">Submit</button>
         </div>
-        <div>
-            <footer>
-                Already Have an account ? <a href="login.aspx">Log in</a>
-            </footer>
-        </div>
+    
     </form>
   <script>
       function onSubmit() {
@@ -88,7 +111,8 @@
               email: $('#email').val(),
               password: $('#password').val(),
               phonenumber: $('#phonenumber').val(),
-              dateofbirth:$('#dateofbirth').val()
+              dateofbirth:$('#dateofbirth').val(),
+              tagSelection:$('#tagSelection').val()
           };
           $.ajax({
               type: "POST",
@@ -99,7 +123,9 @@
                   Email: $('#email').val(),
                   Password: $('#password').val(),
                   Phonenumber: $('#phonenumber').val(),
-                  dateofbirth:$('#dateofbirth').val()
+                  dateofbirth:$('#dateofbirth').val(),
+                  tagSelection:$('#tagSelection').val()
+                  
                   
               },
               dataType: "json", // Specify the expected data type of the response
@@ -137,7 +163,9 @@
                       Email: $('#email').val(),
                       Password: $('#password').val(),
                       Phonenumber: $('#phonenumber').val(),
-                      Dateofbirth: $('#dateofbirth').val()
+                      Dateofbirth: $('#dateofbirth').val(),
+                      TagSelection:$('#tagSelection').val()
+                      
                   },
                   dataType: "json", // Specify the expected data type of the response
                   success: function (response) {
@@ -197,7 +225,14 @@
           var phoneRegex = /^\d{10}$/;
           return phoneRegex.test(phoneNumber);
       }
+       document.getElementById("tagSelection").addEventListener("change", function() {
+          var selectedTag = this.value;
+          console.log("Selected tag: " + selectedTag);
+          // You can perform further actions based on the selected tag here
+        });
   </script>
+
+
 
 </body>
 </html>

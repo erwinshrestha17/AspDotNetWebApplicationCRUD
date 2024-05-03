@@ -130,6 +130,29 @@
                  background-color: #f0f0f0; 
                  color: #007bff; 
              }   
+             
+             .dropdown-options {
+                 display: none;
+                 position: absolute;
+                 background-color: #fff;
+                 box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+             }
+             
+             .dropdown-options ul {
+                 list-style-type: none;
+                 padding: 0;
+                 margin: 0;
+             }
+             
+             .dropdown-options ul li {
+                 padding: 8px;
+                 cursor: pointer;
+             }
+             
+             .dropdown-options ul li:hover {
+                 background-color: #f0f0f0;
+             }
+
     </style>
 </head>
 <body>
@@ -157,8 +180,17 @@
                 <asp:TextBox ID="txtDateOfBirth" runat="server" CssClass="form-control" TextMode="Date"></asp:TextBox>
             </div>
             <br />
-       
-<br />
+         <asp:DropDownList ID="txtDepartment" runat="server" CssClass="form-control" onchange="selectOption(this.value)">
+             <asp:ListItem Value="Select Option">Select Option</asp:ListItem>
+             <asp:ListItem Value="option1">Option 1</asp:ListItem>
+             <asp:ListItem Value="option2">Option 2</asp:ListItem>
+             <asp:ListItem Value="option3">Option 3</asp:ListItem>
+         </asp:DropDownList>
+
+
+
+
+            <br />
             <div class="btn-group">
                 <asp:Button ID="btnUpdate" runat="server" Text="Update" OnClick="btnUpdate_Click" CssClass="btn btn-update" />
                 <asp:Button ID="btnCancel" runat="server" Text="Cancel" OnClick="btnCancel_Click" CssClass="btn btn-cancel" />
@@ -166,6 +198,27 @@
             <asp:Label ID="lblMessage" runat="server" ForeColor="Red"></asp:Label>
         </div>
     </form>
+
+<script>
+function showOptions() {
+    document.getElementById('txtDepartment').size = 5; // Display multiple options
+}
+
+function hideOptions() {
+    document.getElementById('txtDepartment').size = 1; // Display only one option (the selected one)
+}
+
+function selectOption(option) {
+    document.getElementById('txtDepartment').value = option;
+    hideOptions();
+}
+ document.getElementById("txtDepartment").addEventListener("change", function() {
+          var selectedTag = this.value;
+          console.log("Selected tag: " + selectedTag);
+          // You can perform further actions based on the selected tag here
+        });
+
+</script>
 </body>
 </html>
 

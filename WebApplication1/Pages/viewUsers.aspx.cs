@@ -13,7 +13,7 @@ namespace WebApplication1.Pages
 {
     try
     {
-        string connectionString = ConfigurationManager.ConnectionStrings["YourConnectionString"].ConnectionString;
+        string connectionString = "Data Source=Erwin\\MSSQLSERVER01;Initial Catalog=erwin;User Id=erwin17;Password=erwin@1998;";
         string storedProcedureName = "ManageUsers";
 
         using (SqlConnection con = new SqlConnection(connectionString))
@@ -93,7 +93,7 @@ namespace WebApplication1.Pages
         // Handle any exceptions here, such as logging or displaying an error message
         lblMessage.Text = "An error occurred: " + ex.Message;
     }
-}
+    }
         protected void BtnEdit_Click(object sender, EventArgs e) 
         {
             Button btnEdit = (Button)sender;
@@ -101,19 +101,59 @@ namespace WebApplication1.Pages
 
             try
             {
-                string connectionString = ConfigurationManager.ConnectionStrings["YourConnectionString"].ConnectionString;
+                string connectionString = "Data Source=erwin\\MSSQLSERVER01;Initial Catalog=erwin;User Id=erwin17;Password=erwin@1998;"; 
                 string storedProcedureName = "ManageUsers";
 
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection cmd = new SqlConnection(connectionString))
                 {
-                    con.Open();
+                    cmd.Open();
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        con.Open();
 
-                    using (SqlCommand cmd = new SqlCommand(storedProcedureName, con))
+                        // Create a new data adapter
+                        SqlDataAdapter adapter = new SqlDataAdapter();
+                        adapter.SelectCommand = new SqlCommand(storedProcedureName, con);
+                        adapter.SelectCommand.CommandType = CommandType.StoredProcedure;
+                        adapter.SelectCommand.Parameters.AddWithValue("@Action", "selectOne");
+                        adapter.SelectCommand.Parameters.AddWithValue("@UserID", int.Parse(userId));
+
+                        // Create a new DataSet to hold the retrieved data
+                        DataSet dataSet = new DataSet();
+
+                        // Fill the DataSet with the data from the database
+                        adapter.Fill(dataSet);
+
+                        // Check if any rows were returned
+                        if (dataSet.Tables.Count > 0 && dataSet.Tables[0].Rows.Count > 0)
+                        {
+                            // Retrieve the first row (assuming only one row is returned)
+                            DataRow row = dataSet.Tables[0].Rows[0];
+
+                            // Populate form fields with user data
+                            string txtFullName = row["FullName"].ToString();
+                            string txtEmail = row["Email"].ToString();
+                            string txtPassword = row["Password"].ToString();
+                            string txtPhoneNumber = row["PhoneNumber"].ToString();
+                            DateTime? dateOfBirth = row["DateOfBirth"] as DateTime?;
+                            string txtDepartment = row["Department"].ToString();
+        
+                            // Redirect to the update page with the user ID for editing
+                            Response.Redirect($"update.aspx?UserID={userId}");
+                        }
+                        else
+                        {
+                            // Handle case where user with provided ID is not found
+                            // You can redirect or display an error message
+                            lblMessage.Text = "User not found.";
+                        }
+                    }
+
+                    /*using (SqlCommand cmd = new SqlCommand(storedProcedureName, con))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("@Action", "select");
+                        cmd.Parameters.AddWithValue("@Action", "selectOne");
                         cmd.Parameters.AddWithValue("@UserID", int.Parse(userId));
-
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
                             if (reader.Read())
@@ -124,7 +164,8 @@ namespace WebApplication1.Pages
                                 string txtPassword = reader["Password"].ToString();
                                 string txtPhoneNumber = reader["PhoneNumber"].ToString();
                                 DateTime? dateOfBirth = reader["DateOfBirth"] as DateTime?;
-
+                                string txtDepartment = reader["Department"].ToString();
+                                
                                 // Redirect to the update page with the user ID for editing
                                 Response.Redirect($"update.aspx?UserID={userId}");
                             }
@@ -135,7 +176,7 @@ namespace WebApplication1.Pages
                                 lblMessage.Text = "User not found.";
                             }
                         }
-                    }
+                    }*/
                 }
             }
             catch (Exception ex)
@@ -153,7 +194,7 @@ namespace WebApplication1.Pages
 
     try
     {
-        string connectionString = ConfigurationManager.ConnectionStrings["YourConnectionString"].ConnectionString;
+        string connectionString = "Data Source=erwin\\MSSQLSERVER01;Initial Catalog=erwin;User Id=erwin17;Password=erwin@1998;"; 
         string storedProcedureName = "ManageUsers";
 
         using (SqlConnection con = new SqlConnection(connectionString))

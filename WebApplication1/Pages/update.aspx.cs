@@ -2,7 +2,6 @@
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Data;
-using System.Data.SqlClient;
 
 
 namespace WebApplication1.Pages
@@ -27,17 +26,17 @@ namespace WebApplication1.Pages
             }
         }
 
-        private void PopulateUserData(string userId)
+        private void PopulateUserData(string userID)
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["YourConnectionString"].ConnectionString;
+            string connectionString = "Server=Erwin\\MSSQLSERVER01;Database=erwin;User Id=erwin17;Password=erwin@1998;";
             string storedProcedureName = "ManageUsers";
-            
+
             using (SqlConnection con = new SqlConnection(connectionString))
             using (SqlCommand cmd = new SqlCommand(storedProcedureName, con))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Action", "selectOne");
-                cmd.Parameters.AddWithValue("@UserID", userId);
+                cmd.Parameters.AddWithValue("@UserID", int.Parse(userID));
 
                 con.Open();
 
@@ -50,7 +49,7 @@ namespace WebApplication1.Pages
                         txtEmail.Text = reader["Email"].ToString();
                         txtPassword.Text = reader["Password"].ToString();
                         txtPhoneNumber.Text = reader["PhoneNumber"].ToString();
-
+                
                         // Check if DateOfBirth column exists and it's not null
                         if (reader["DateOfBirth"] != DBNull.Value)
                         {
@@ -79,6 +78,8 @@ namespace WebApplication1.Pages
             string phoneNumber = txtPhoneNumber.Text;
             DateTime? dateOfBirth = null;
 
+            string department = txtDepartment.SelectedItem.Text;
+            
             // Check if the date of birth textbox is not empty
             if (!string.IsNullOrEmpty(txtDateOfBirth.Text))
             {
@@ -88,9 +89,8 @@ namespace WebApplication1.Pages
                     dateOfBirth = dob;
                 }
             }
-
             // Update the user data in the database using the ManageUsers stored procedure
-            string connectionString = ConfigurationManager.ConnectionStrings["YourConnectionString"].ConnectionString;
+            string connectionString = "Server=Erwin\\MSSQLSERVER01;Database=erwin;User Id=erwin17;Password=erwin@1998;";
             string storedProcedureName = "ManageUsers";
 
             using (SqlConnection con = new SqlConnection(connectionString))
@@ -104,6 +104,7 @@ namespace WebApplication1.Pages
                 cmd.Parameters.AddWithValue("@Password", password);
                 cmd.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
                 cmd.Parameters.AddWithValue("@DateOfBirth", dateOfBirth ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Department", department);
 
                 con.Open();
                 int rowsAffected = cmd.ExecuteNonQuery();
@@ -125,5 +126,6 @@ namespace WebApplication1.Pages
             // Redirect back to the viewUsers page
             Response.Redirect("viewUsers.aspx");
         }
+        
     }
 }

@@ -107,6 +107,7 @@
                         <th>Password</th>
                         <th>Phone Number</th>
                         <th>Date of Birth </th>
+                        <th>Department</th>
                         <th>Actions</th>
                     </tr>
                 </thead>

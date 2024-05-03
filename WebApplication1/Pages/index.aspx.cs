@@ -25,6 +25,7 @@ namespace WebApplication1.Pages
             string password = Request.Form["Password"]?.Trim();
             string phoneNumber = Request.Form["PhoneNumber"]?.Trim();
             string dateOfBirth = Request.Form["DateOfBirth"]?.Trim();
+            string department = Request.Form["TagSelection"]?.Trim();
 
             if (string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(email) ||
                 string.IsNullOrEmpty(password) || string.IsNullOrEmpty(phoneNumber))
@@ -33,64 +34,14 @@ namespace WebApplication1.Pages
             }
 
             // NormalInsertQuery(fullName, email, password, phoneNumber, dateOfBirth);
-             ManageUserSP("insert",fullName,email,password,phoneNumber,dateOfBirth);
+             ManageUserSP("insert",fullName,email,password,phoneNumber,dateOfBirth,department);
 
 
 
 
         }
 
-        private string NormalInsertQuery(string fullName , string email,string password,string phoneNumber,string dateOfBirth)
-        { 
-            string connectionString = "Data Source=erwin\\MSSQLSERVER01;Initial Catalog=erwin;User Id=erwin17;Password=erwin@1998;";
-            string checkEmailQuery = "SELECT COUNT(*) FROM Users WHERE Email = @Email";
-            string insertDataQuery = "INSERT INTO Users (FullName, Email, Password, PhoneNumber, DateOfBirth) VALUES (@FullName, @Email, @Password, @PhoneNumber, @DateOfBirth)";
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-
-                using (SqlCommand checkEmailCommand = new SqlCommand(checkEmailQuery, connection))
-                {
-                    
-                    
-                    checkEmailCommand.Parameters.Add("@Email", SqlDbType.NVarChar).Value = email;
-                    int emailCount = (int)checkEmailCommand.ExecuteScalar();
-                    if (emailCount > 0)
-                    {
-                        lblErrorMessage.Text = "Email already exists. Please use a different email.";
-                    }
-                    else
-                    {
-                        using (SqlCommand command = new SqlCommand(insertDataQuery, connection))
-                        {
-                            command.Parameters.AddWithValue("@FullName", fullName);
-                            command.Parameters.AddWithValue("@Email", email);
-                            command.Parameters.AddWithValue("@Password", password);
-                            command.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
-                            command.Parameters.AddWithValue("@DateOfBirth", dateOfBirth);
-
-                            try
-                            {
-                                command.ExecuteNonQuery();
-                                Response.Redirect("login.aspx");
-                            }
-                            catch (Exception ex)
-                            {
-                                // Log the exception or provide feedback to the user indicating the error
-                                lblErrorMessage.Text = "An error occurred while registering. Please try again later.";
-                                // Log the exception details
-                                // Log.Error(ex, "Error occurred while registering user.");
-                            }
-                        }
-                    }
-                }
-            }
-
-            return "Invalid";
-        }
-
-        private static void ManageUserSP(string action, string fullName, string email, string password, string phoneNumber, string dateOfBirth)
+        private static void ManageUserSP(string action, string fullName, string email, string password, string phoneNumber, string dateOfBirth , string department)
         {
             string connectionString = "Data Source=erwin\\MSSQLSERVER01;Initial Catalog=erwin;User Id=erwin17;Password=erwin@1998;"; 
             string storedProcedureName = "ManageUsers";
@@ -110,6 +61,8 @@ namespace WebApplication1.Pages
                     command.Parameters.AddWithValue("@Password", password);
                     command.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
                     command.Parameters.AddWithValue("@DateOfBirth", dateOfBirth);
+                    command.Parameters.AddWithValue("@Department", department);
+                    
 
                     try
                     {
